@@ -1,4 +1,4 @@
-import { PluginCommonModule, Type, VendurePlugin } from '@vendure/core';
+import { Allow, Ctx, CustomerService, Permission, PluginCommonModule, RequestContext, Transaction, Type, VendureConfig, VendurePlugin } from '@vendure/core';
 import { AdminUiExtension } from '@vendure/ui-devkit/compiler';
 import path from 'path';
 
@@ -9,6 +9,7 @@ import { adminApiExtensions, shopApiExtensions } from './api/api-extensions';
 import { ExampleResolver } from './api/example.resolver';
 import { ExampleAdminResolver } from './api/example-admin.resolver';
 import { PluginInitOptions } from './types';
+import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 /**
  * An example Vendure plugin.
@@ -25,6 +26,8 @@ import { PluginInitOptions } from './types';
  * }
  * ```
  */
+
+
 @VendurePlugin({
     // Importing the PluginCommonModule gives all of our plugin's injectables (services, resolvers)
     // access to the Vendure core providers. See https://www.vendure.io/docs/typescript-api/plugin/plugin-common-module/
@@ -44,6 +47,19 @@ import { PluginInitOptions } from './types';
         // user-defined options into other classes, such as the {@link ExampleService}.
         { provide: PLUGIN_INIT_OPTIONS, useFactory: () => ExamplePlugin.options },
     ],
+    configuration: config => {
+        config.customFields.Customer.push(
+        {
+            type: 'string',
+            name: 'cnpj',
+        },
+        {
+            type: 'boolean',
+            name: 'approved'
+        }
+        )
+        return config
+    }
 })
 export class ExamplePlugin {
     static options: PluginInitOptions;
@@ -73,4 +89,17 @@ export class ExamplePlugin {
             },
         ],
     };
+}
+
+@Resolver()
+export class RandomCatResolver {
+
+  constructor(private productService: CustomerService) {}
+
+  @Transaction()
+  @Mutation()
+  @Allow(Permission.CreateCustomer)
+  async addRandomCat(@Ctx() ctx: RequestContext) {
+        console.log(ctx)
+  }
 }
