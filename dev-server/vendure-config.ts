@@ -7,7 +7,7 @@ import {
 import { AssetServerPlugin } from '@vendure/asset-server-plugin';
 import { AdminUiPlugin } from '@vendure/admin-ui-plugin';
 import path from 'path';
-import { ExamplePlugin } from '../index';
+import { CustomAuthPlugin } from '../index';
 import { compileUiExtensions } from '@vendure/ui-devkit/compiler';
 
 export const headlessConfig: VendureConfig = {
@@ -59,7 +59,7 @@ export const headlessConfig: VendureConfig = {
         }),
         DefaultJobQueuePlugin,
         DefaultSearchPlugin,
-        ExamplePlugin,
+        CustomAuthPlugin,
     ],
 };
 
@@ -73,7 +73,7 @@ export const config: VendureConfig = {
             app: compileUiExtensions({
                 outputPath: path.join(__dirname, 'admin-ui'),
                 devMode: true,
-                extensions: [ExamplePlugin.uiExtensions],
+                extensions: [],
             }),
         }),
     ],

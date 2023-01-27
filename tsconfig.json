@@ -18,5 +18,8 @@
   },
   "files": [
     "./index.ts"
+  ],
+  "include": [
+    "./src/**/*.ts",
   ]
 }
